@@ -1,0 +1,21 @@
+1、创建目录
+Android/android-6.0.1_r79
+2、下载
+curl https://storage.googleapis.com/git-repo-downloads/repo > ./repo
+3、
+./repo init -u git://mirrors.ustc.edu.cn/aosp/platform/manifest -b android-6.0.1_r79
+安卓列表https://blog.csdn.net/u013005791/article/details/52228727
+如果提示无法连接到 gerrit.googlesource.com，可以编辑 ./repo，把 REPO_URL 一行替换成下面的：
+REPO_URL = 'https://gerrit-googlesource.lug.ustc.edu.cn/git-repo'
+
+4、./repo sync
+
+
+python版本切换
+下载2.7版本：apt-get install --reinstall python2.7
+sudo apt-get install --reinstall python-minimal
+sudo rm /usr/local/bin/python
+sudo ln -s /usr/bin/python3.5 /usr/local/bin/python
+
+sudo rm /usr/local/bin/python
+sudo ln -s /usr/bin/python2.7 /usr/local/bin/python
