@@ -24,3 +24,6 @@ vim /etc/apt/sources.list
 sudo apt-get update	//下载更新
 sudo apt-get upgrade	//更新下载
 
+5、挂载U盘
+sudo mkdir /mnt/d
+sudo mount -t drvfs D: /mnt/d
