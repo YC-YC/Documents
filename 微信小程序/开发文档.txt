@@ -1,0 +1,23 @@
+一、账号申请
+https://mp.weixin.qq.com/wxopen/waregister?action=step1
+注册后，以后可通过公众平台：https://mp.weixin.qq.com查看小程序的appID，发布应用等
+二、开发工具
+https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html?t=2018518
+安装后扫码登录
+
+三、代码构成
+1、.json 后缀的 JSON 配置文件
+	app.json配置文件
+		pages：设置页面路径
+		window：设置默认页面的窗口表现
+		tabBar：设置底部 tab 的表现
+		networkTimeout：设置网络超时时间
+		debug
+	project.config.json 工具配置 
+	page.json 每个页面的配置，默认page目录下面的配置是根据根配置文件而定
+2、.wxml 后缀的 WXML 模板文件
+	类似HTML，用来描述这个页面结构
+3、.wxss 后缀的 WXSS 样式文件
+	类似CSS，描述页面的样子，和app.json一样，有全局样式和局部样式
+4、.js 后缀的 JS 脚本逻辑文件
+	类似JavaScrip，处理页面与用户的交互
