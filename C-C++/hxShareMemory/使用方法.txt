@@ -1,0 +1,9 @@
+1、进入src目录，运行“编译.bat”,会在lib目录生成一个相应的so
+2、将当前目录（shareMemory，为了代码安全性，将src目录删除）拷贝到C:\KanziWorkspace_3_2_10_722_104146\Engine\libraries\common
+3、修改C:\KanziWorkspace_3_2_10_722_104146\Engine\configs\platforms\linux\config.py
+	添加：
+	#add by hx
+	m.env["CPPPATH"] += [os.path.join(engine_root, "libraries", "common", "hxShareMemory", "include")]
+	m.env["LIBPATH"] += [os.path.join(engine_root, "libraries", "common","hxShareMemory", "lib")]
+	m.env["LIBS"] += ["libhxshm"]
+4、将libhxshm.so拷贝到机器的/usb/lib目录下
