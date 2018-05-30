@@ -6,6 +6,8 @@
  */
 #include "../include/ShmHelper.h"
 #include "ShmFunc.h"
+#include <sys/types.h>
+#include <sys/ipc.h>
 #include <errno.h>
 #include <pthread.h>
 #include <string.h>
@@ -19,17 +21,17 @@ void* threadHandler(void* param){
 }
 
 ShmHelper::ShmHelper(){
-	LOG("version is:2018.05.24");
+	LOG("version is:2018.05.30.01");
 	m_pShm = NULL;
-	mShmid = 0;
+	mShmid = -1;
 	m_bCreateShm = false;
 	m_bCreateReadThread = false;
 	m_bThreadRunReq = false;
 	m_bThreadRunReq = false;
 	memset(&mData, 0, sizeof(Data_st));
-	if ((mShmid = getShareMemory(MEMORY_KEY_ID, sizeof(SHAREDATA))) <= 0){
+	if ((mShmid = getShareMemory(MEMORY_KEY_ID, sizeof(SHAREDATA))) == -1){
 		mShmid = createShareMemory(MEMORY_KEY_ID, sizeof(SHAREDATA));
-		if (mShmid > 0){
+		if (mShmid != -1){
 			LOG("create share memory service ok\n");
 			m_bCreateShm = true;
 		}
@@ -41,40 +43,37 @@ ShmHelper::ShmHelper(){
 		LOG("getShareMemory ok\n");
 	}
 
-	if (mShmid > 0){
+	if (mShmid != -1){
 		m_pShm = (SHAREDATA *)attachShareMemory(mShmid);
 	}
 	else{
-		LOG("getShareMemory error,no =%\n", errno);
+		LOG("getShareMemory error,no =%d\n", errno);
 	}
 
 	if(m_pShm != NULL){
 		if (m_bCreateShm){
 			LOG("init share memory data\n");
-			(*m_pShm).semId = 0;
+			(*m_pShm).semId = -1;
 			memset(&(*m_pShm).shmData, 0, sizeof(Data_st));
-		}
-		
-		if ((*m_pShm).semId == 0){
 			(*m_pShm).semId = createSemaphore(SEM_ID);
-			if ((*m_pShm).semId > 0){
+			LOG("create Semaphore %d\n", (*m_pShm).semId);
+			if ((*m_pShm).semId != -1){
 				LOG("create Semaphore ok\n");
 			}
 			else{
 				LOG("create Semaphore error, no=%d\n", errno);
 			}
 		}
-		
 	}
 	else{
-		LOG("attachShareMemory error,no =%\n", errno);
+		LOG("attachShareMemory error,no =%d\n", errno);
 	}
 
 }
 ShmHelper::~ShmHelper(){
 	m_bThreadRunReq = false;
 	if (m_pShm != NULL){
-		if ((*m_pShm).semId > 0){
+		if ((*m_pShm).semId >= 0){
 			deleteSemaphore((*m_pShm).semId);
 		}
 
@@ -108,7 +107,18 @@ void ShmHelper::removeShmDataCallback(ShmDataCallback* cb){
 		m_bCreateReadThread = false;
 	}
 }
-bool ShmHelper::getShmData(Data_st& data){
+int ShmHelper::getShmData(int index){
+	if (m_pShm != NULL && index >= CMD_UPGRADE_REQ_SUSPEND && index < CMD_MAX){
+		if (getSemaphore((*m_pShm).semId)){
+			int val = (*m_pShm).shmData.params[index];
+			releaseSemaphore((*m_pShm).semId);
+			return val;
+		}
+	}
+	return -1;
+
+}
+bool ShmHelper::getAllShmData(Data_st& data){
 	if (m_pShm != NULL){
 		if (getSemaphore((*m_pShm).semId)){
 			memcpy(&data, &(*m_pShm).shmData, sizeof(Data_st));
@@ -119,10 +129,11 @@ bool ShmHelper::getShmData(Data_st& data){
 	return false;
 
 }
-bool ShmHelper::setShmData(Data_st data){
+bool ShmHelper::setShmData(int index, int param){
 	if (m_pShm != NULL){
 		if (getSemaphore((*m_pShm).semId)){
-			memcpy(&(*m_pShm).shmData, &data, sizeof(Data_st));
+			//memcpy(&(*m_pShm).shmData, &data, sizeof(Data_st));
+			(*m_pShm).shmData.params[index] = param;
 			//LOG("setShmData cmd = %d, data=%s\n", (*m_pShm).shmData.cmd, (*m_pShm).shmData.data);
 			releaseSemaphore((*m_pShm).semId);
 			return true;
@@ -134,10 +145,10 @@ bool ShmHelper::setShmData(Data_st data){
 	return false;
 }
 
-void ShmHelper::notifyDataChange(const Data_st& data){
+void ShmHelper::notifyDataChange(int index, int param){
 	CB_LIST::iterator it = mCBList.begin();
 	while(it != mCBList.end()){
-		(*it)->onDataChange(data);
+		(*it)->onDataChange(index, param);
 		it++;
 	}
 }
@@ -149,11 +160,13 @@ void* ShmHelper::observerThreadHandler(){
 		
 		Data_st data;
 		memset(&data, 0, sizeof(Data_st));
-		getShmData(data);
+		getAllShmData(data);
 		//LOG("observerThreadHandler run...cmd = %d, data=%s\n", data.cmd, data.data);
-		if (data.cmd != mData.cmd || strcmp(data.data, mData.data) != 0){
-			memcpy(&mData, &data, sizeof(Data_st));
-			notifyDataChange(data);
+		for (int i = CMD_UPGRADE_REQ_SUSPEND; i < CMD_MAX; i++){
+			if (data.params[i] != mData.params[i]){
+				mData.params[i] = data.params[i];
+				notifyDataChange(i, mData.params[i]);
+			}	
 		}
 		usleep(50*1000);
 	}

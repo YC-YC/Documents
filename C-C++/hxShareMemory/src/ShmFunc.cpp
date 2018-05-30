@@ -24,6 +24,9 @@ int createSemaphore(key_t key){
 }
 //获取信号量
 bool getSemaphore(int semId){
+	if (semId == -1){
+		return false;
+	}
 	struct sembuf sb;
 	sb.sem_num = 0;
 	sb.sem_op = 1;
@@ -32,6 +35,9 @@ bool getSemaphore(int semId){
 }
 //释放信号量
 bool releaseSemaphore(int semId){
+	if (semId == -1){
+		return false;
+	}
 	struct sembuf sb;
 	sb.sem_num = 0;
 	sb.sem_op = -1;
@@ -40,6 +46,9 @@ bool releaseSemaphore(int semId){
 }
 //删除信号量
 bool deleteSemaphore(int semId){
+	if (semId == -1){
+		return false;
+	}
 	return semctl(semId, 0, IPC_RMID, NULL) != -1;
 }
 
@@ -49,7 +58,7 @@ int createShareMemory(key_t id, int size){
 }
 //获取共享内存
 int getShareMemory(key_t id, int size){
-	return shmget(id, size, 0);
+	return shmget(id, size, 0666);
 }
 //绑定共享内存
 void* attachShareMemory(int shmId){

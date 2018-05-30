@@ -14,7 +14,7 @@
 
 class ShmDataCallback{
 public:
-	virtual void onDataChange(const Data_st& data) = 0;
+	virtual void onDataChange(int index, int param) = 0;
 };
 
 
@@ -25,13 +25,13 @@ public:
 	~ShmHelper();
 	void addShmDataCallback(ShmDataCallback* cb);
 	void removeShmDataCallback(ShmDataCallback* cb);
-	bool getShmData(Data_st& data);
-	bool setShmData(Data_st data);
+	int getShmData(int index);	//获取索引值对应的值
+	bool setShmData(int index, int param);	//设置索引值对应的值
 	friend void* threadHandler(void* param);
 private:
 	void* observerThreadHandler();
-	void notifyDataChange(const Data_st& data);
-
+	void notifyDataChange(int index, int param);
+	bool getAllShmData(Data_st& data);
 private:
 	typedef std::list<ShmDataCallback *> CB_LIST;
 	CB_LIST mCBList;

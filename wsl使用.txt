@@ -9,16 +9,16 @@ C:\Users\FUCHAO\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79r
 
 3、修改更新源镜像（update/upgrade依据）
 vim /etc/apt/sources.list
-# deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
-# deb http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
-# deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
-# deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
-# deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
-# deb-src http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
-# deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
-# deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
-# deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
-# deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
 
 4、更新
 sudo apt-get update	//下载更新

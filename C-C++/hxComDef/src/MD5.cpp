@@ -4,7 +4,7 @@
  *  Created on: 2018-5-21
  *      Author: YC2
  */
-#include "../include/md5.h"
+#include "../include/MD5.h"
 #include <string.h>
 
 using namespace std;

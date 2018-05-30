@@ -14,11 +14,20 @@
 #include <stdio.h>
 
 #define MEMORY_KEY_ID	0x8187
-#define DATA_LEN	255
+#define PARAS_MAX_LEN	255
+
+//Data_st 的paras索引值
+enum PARAS_INX{
+	CMD_UPGRADE_REQ_SUSPEND = 0,	//升级应用请求其它应用挂起UI
+	CMD_UPGRADE_REQ_UART,		//升级应用请求使用串口
+	CMD_PLAYER_RES_UART,		//主应用（kzbplayer）回应停止使用串口
+	CMD_MAX
+};
 
 typedef struct{
-	int cmd;
-	char data[DATA_LEN+1];
+	int params[PARAS_MAX_LEN];
+	//int cmd;
+	//char data[DATA_LEN+1];
 }Data_st;
 
 typedef struct
