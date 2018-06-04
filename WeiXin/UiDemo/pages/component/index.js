@@ -19,8 +19,9 @@ Page({
     }]
   },
 
-  kinkToggle: function(e){
+  kindToggle: function(e){
     var id = e.currentTarget.id, list = this.data.list;
+    console.log("click id=" + id);
     for( var i = 0, len = list.length; i < len; i++){
       if (list[i].id == id){
         list[i].open = !list[i].open;
@@ -29,5 +30,8 @@ Page({
         list[i].open = false;
       }
     }
+    this.setData({
+      list: list
+    });
   }
 })
